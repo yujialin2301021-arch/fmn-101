@@ -1,0 +1,28 @@
+show");game.style.display="block";render();
+});
+document.getElementById("copyBtn").addEventListener("click",async()=>{
+  const m=byId[state.champion];
+  const text=`我的 FMN 101：${m.title}（${m.year}）｜豆瓣 ${m.rating.toFixed(1)} ⭐`;
+  try{await navigator.clipboard.writeText(text)}catch(e){
+    const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();
+  }
+  toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1300);
+});
+
+state=loadState();
+if(state.finished && state.champion) showResult(); else render();
+</script>
+
+<script>
+window.addEventListener("load", () => {
+  let posterLoads = 0, posterErrors = 0;
+  const imgs = [...document.querySelectorAll("img.poster")];
+  imgs.forEach(img => {
+    img.addEventListener("load", () => posterLoads++);
+    img.addEventListener("error", () => posterErrors++);
+  });
+});
+</script>
+
+</body>
+</html>
