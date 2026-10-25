@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://wsrv.nl" crossorigin>
 <link rel="dns-prefetch" href="//wsrv.nl">
 <title>FMN60部电影达成庆祝活动 · FMN 101</title>
+<!-- mobile poster speed v8 -->
 <style>
   :root{
     --bg:#f7efe5;
@@ -90,11 +91,4 @@
   }
   .rating b{color:var(--gold);margin-right:4px}
   .kbd{
-    position:absolute;right:15px;top:15px;z-index:3;width:31px;height:31px;border-radius:9px;
-    display:grid;place-items:center;background:rgba(255,250,243,.88);border:1px solid rgba(81,55,84,.12);
-    font-size:11px;color:#927485;font-weight:800
-  }
-  .card-body{padding:18px 19px 20px}
-  .title-row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
-  .movie-title{font-size:clamp(20px,2.4vw,29px);font-weight:900;letter-spacing:-.035em;line-height:1.16}
-  .year{flex:0 0 auto;color:#929baa;font-size:12px;border:1px solid var(--line);padding:5px 7px;border-radius:7
+    position:absolute;right:15px;top:15px
