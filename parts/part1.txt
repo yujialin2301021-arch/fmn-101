@@ -1,0 +1,126 @@
+px;margin-top:1px}
+  .original{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45;min-height:18px}
+  .pick{margin-top:17px;display:flex;align-items:center;justify-content:space-between;color:#7b5d6a;font-size:12px;font-weight:800}
+  .pick span:last-child{color:var(--gold);font-size:18px;transition:transform .2s ease}
+  .movie-card:hover .pick span:last-child{transform:translateX(4px)}
+  .hint{text-align:center;color:#8b7a8f;font-size:12px;margin:20px 0 0}
+  .hint strong{color:#b9c0cc}
+  .status-note{
+    margin:18px auto 0;max-width:780px;text-align:center;color:#938495;font-size:11px;line-height:1.6
+  }
+  .result{display:none;text-align:center;padding:10px 0 0}
+  .result.show{display:block}
+  .crown{font-size:47px;filter:drop-shadow(0 8px 20px rgba(243,200,106,.22));margin-bottom:8px}
+  .result h2{font-size:clamp(34px,6vw,65px);margin:0 0 8px;letter-spacing:-.05em}
+  .result .lead{color:var(--muted);margin-bottom:24px}
+  .winner-card{
+    width:min(390px,92vw);margin:0 auto;border:1px solid rgba(243,200,106,.36);border-radius:26px;overflow:hidden;
+    background:linear-gradient(180deg,#fff8f1,#fffaf6);box-shadow:0 24px 70px rgba(116,84,96,.16),0 0 40px rgba(243,200,106,.09)
+  }
+  .winner-card .poster-wrap{aspect-ratio:2/3}
+  .winner-meta{padding:18px}
+  .winner-name{font-size:29px;font-weight:950;letter-spacing:-.04em}
+  .winner-score{margin-top:7px;color:var(--gold);font-weight:900}
+  .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:22px 0}
+  button{
+    appearance:none;border:0;cursor:pointer;border-radius:12px;padding:12px 16px;font-weight:800;font-size:13px
+  }
+  .primary{background:linear-gradient(135deg,#f0c36d,#e8a5b6);color:#4c2e37}
+  .secondary{background:#fffaf3;color:#6f5665;border:1px solid var(--line)}
+  .road{
+    width:min(720px,100%);margin:24px auto 0;text-align:left;background:rgba(255,250,245,.86);
+    border:1px solid var(--line);border-radius:18px;padding:16px
+  }
+  .road h3{margin:0 0 10px;font-size:13px;color:#cad0da}
+  .road-list{display:flex;flex-wrap:wrap;gap:8px}
+  .road-list span{font-size:11px;color:#7f6a79;border:1px solid var(--line);border-radius:999px;padding:7px 9px;background:#fff7f1}
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;z-index:20;
+    background:#f1c76f;color:#22190a;padding:10px 14px;border-radius:999px;font-size:12px;font-weight:850;
+    transition:.25s ease;pointer-events:none;box-shadow:0 10px 35px rgba(0,0,0,.3)
+  }
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:15;overflow:hidden}
+  .confetti i{position:absolute;top:-20px;width:8px;height:14px;border-radius:2px;background:var(--gold);animation:fall linear forwards}
+  @keyframes fall{to{transform:translate3d(var(--dx),105vh,0) rotate(760deg);opacity:.2}}
+  .fade-out{animation:fadeOut .16s ease forwards}
+  @keyframes fadeOut{to{opacity:0;transform:scale(.985)}}
+  footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);text-align:center;color:#687180;font-size:10px;line-height:1.7}
+  @media (max-width:760px){
+    .app{width:min(100% - 18px,680px);padding-top:22px}
+    header{align-items:flex-start}
+    .source-link{display:none}
+    .arena{grid-template-columns:1fr 36px 1fr;gap:8px}
+    .vs{width:36px;height:36px;font-size:10px;box-shadow:none}
+    .movie-card{border-radius:17px}
+    .card-body{padding:12px 12px 14px}
+    .movie-title{font-size:16px}
+    .original{font-size:10px;min-height:28px}
+    .year{font-size:9px;padding:4px 5px}
+    .rating{left:9px;top:9px;padding:5px 7px;font-size:10px}
+    .kbd{display:none}
+    .pick{font-size:10px;margin-top:11px}
+    .pick span:last-child{font-size:14px}
+    .hud{padding:11px 12px}
+    .subtitle{font-size:12px}
+  }
+
+  /* v4 poster display fix: do not wait for a load-class before showing images */
+  .poster{
+    opacity:1 !important;
+    visibility:visible !important;
+    display:block !important;
+  }
+
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="confetti" id="confetti"></div>
+<main class="app">
+  <header>
+    <div>
+      <div class="eyebrow">FMN60部电影达成庆祝活动 · FMN 101</div>
+      <h1>一起庆祝我们看完 60 部电影。</h1>
+      <p class="subtitle">庆祝 Friday Movie Night 达成 60 部电影纪念。每次从两部电影里选出此刻更偏爱的一部，最后留下你的 FMN one pick。<br>🎞️🍿💛 山治餐厅有自己的佳片有约</p>
+    </div>
+    <a class="source-link" target="_blank" rel="noopener" href="https://www.douban.com/doulist/160122574/">查看原豆列 ↗</a>
+  </header>
+
+  <section id="game">
+    <div class="hud">
+      <div>
+        <div class="progress-meta"><span id="progressText">准备开赛</span><span id="countText"></span></div>
+        <div class="bar"><i id="progressBar"></i></div>
+      </div>
+      <div class="round-chip" id="roundChip">第 1 轮</div>
+    </div>
+
+    <div class="arena" id="arena">
+      <article class="movie-card" id="leftCard" tabindex="0" role="button" aria-label="选择左边电影"></article>
+      <div class="vs">VS</div>
+      <article class="movie-card" id="rightCard" tabindex="0" role="button" aria-label="选择右边电影"></article>
+    </div>
+    <p class="hint">点击你此刻更偏爱的一部 · 电脑键盘也可以按 <strong>A</strong> / <strong>D</strong></p>
+    <div class="status-note">这一版不再运行时调用跨域海报 API：每部电影都预先写入了对应海报直链，并按顺序自动尝试备用源；若全部不可用才显示电影名占位封面。进度仍会保存在本机浏览器。</div>
+  </section>
+
+  <section class="result" id="result">
+    <div class="crown">♛</div>
+    <div class="eyebrow">FMN 101</div>
+    <h2>FMN 101 诞生啦</h2>
+    <p class="lead">在这份 60 部电影纪念片单里，你最终留下了这部心头好。</p>
+    <div class="winner-card" id="winnerCard"></div>
+    <div class="actions">
+      <button class="primary" id="restartBtn">重新开始，再选一次</button>
+      <button class="secondary" id="copyBtn">复制结果</button>
+    </div>
+    <div class="road" id="road">
+      <h3>一路相遇过的电影</h3>
+      <div class="road-list" id="roadList"></div>
+    </div>
+  </section>
+
+  <footer>
+    电影片名、年份与豆瓣评分依据「周五电影之夜」公开豆列页面整理（2026-10-25读取）。豆列页面标记“全部(60)”，但当前公开分页实际可读取到58个电影条目，因此本游戏纳入58部可读取电影。<br>
+    海报已按电影逐一预解析为直链；能确认到豆瓣词条主海报的条目优先使用豆瓣图源，并配置其他对应电影海报作为备用。这是为 FMN 
