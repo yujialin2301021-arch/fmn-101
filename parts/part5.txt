@@ -67,11 +67,115 @@ function resolvePoster(m,img){
   tryNext();
 }
 
+/* Mobile-first poster loader v8: show a tiny WebP first, then upgrade quietly. */
+function fastPosterUrl(src){
+  if(!src) return null;
+  const mobile = window.matchMedia && window.matchMedia("(max-width: 700px)").matches;
+  const w = mobile ? 240 : 320;
+  const h = Math.round(w * 1.5);
+  return `https://wsrv.nl/?url=${encodeURIComponent(src)}&w=${w}&h=${h}&fit=cover&output=webp&q=48`;
+}
+function sharpPosterUrl(src){
+  if(!src) return null;
+  const mobile = window.matchMedia && window.matchMedia("(max-width: 700px)").matches;
+  const w = mobile ? 420 : 560;
+  const h = Math.round(w * 1.5);
+  return `https://wsrv.nl/?url=${encodeURIComponent(src)}&w=${w}&h=${h}&fit=cover&output=webp&q=72`;
+}
+function originalPosterSources(m){
+  return [...new Set([
+    ...(DIRECT_POSTERS[m.id] || []),
+    m.poster,
+    m.douban ? `https://dou.img.lithub.cc/movie/${m.douban}.jpg` : null
+  ].filter(Boolean))];
+}
+function posterCandidates(m){
+  return originalPosterSources(m).map(fastPosterUrl).filter(Boolean);
+}
+function shouldUpgradePoster(){
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if(!c) return true;
+  if(c.saveData) return false;
+  return !["slow-2g","2g"].includes(c.effectiveType);
+}
+function preloadMoviePoster(m){
+  if(!m || PRELOADED_POSTERS.has(m.id)) return;
+  PRELOADED_POSTERS.add(m.id);
+  const src = posterCandidates(m)[0];
+  if(!src) return;
+  const pre = new Image();
+  pre.decoding = "async";
+  pre.fetchPriority = "low";
+  pre.src = src;
+}
+function preloadUpcoming(){
+  const ids = state.current.slice(state.index + 2, state.index + 14);
+  ids.forEach(id => preloadMoviePoster(byId[id]));
+}
+function resolvePoster(m,img){
+  const wrap = img.parentElement;
+  const ph = wrap ? wrap.querySelector(".poster-placeholder") : null;
+  const originals = originalPosterSources(m);
+  const thumbs = originals.map(fastPosterUrl);
+  let i = 0;
+
+  img.style.display = "block";
+  img.style.opacity = "1";
+  img.style.visibility = "visible";
+
+  const reveal = () => {
+    img.style.display = "block";
+    img.style.opacity = "1";
+    img.style.visibility = "visible";
+    img.style.position = "absolute";
+    img.style.inset = "0";
+    img.style.zIndex = "1";
+    if(ph) ph.style.display = "none";
+  };
+
+  const upgradeQuietly = (originalSrc) => {
+    if(!shouldUpgradePoster() || !originalSrc) return;
+    const sharp = new Image();
+    sharp.decoding = "async";
+    sharp.fetchPriority = "low";
+    sharp.onload = () => {
+      img.src = sharp.src;
+      reveal();
+    };
+    sharp.src = sharpPosterUrl(originalSrc);
+  };
+
+  const tryThumb = () => {
+    if(i >= thumbs.length){
+      let j=0;
+      const tryOriginal = () => {
+        if(j >= originals.length){ posterFallback(wrap,m); return; }
+        const src = originals[j++];
+        img.onload = reveal;
+        img.onerror = tryOriginal;
+        img.src = src;
+      };
+      tryOriginal();
+      return;
+    }
+    const sourceIndex = i;
+    const src = thumbs[i++];
+    img.onload = () => {
+      reveal();
+      setTimeout(() => upgradeQuietly(originals[sourceIndex]), 120);
+    };
+    img.onerror = tryThumb;
+    img.src = src;
+  };
+  tryThumb();
+}
+
+
 function cardHTML(m,side){
   return `
     <div class="poster-wrap">
       <div class="poster-placeholder">${m.title}</div>
-      <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="high">
+      <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="auto">
       <div class="rating"><b>★</b>${m.rating.toFixed(1)}</div>
       <div class="kbd">${side==="left"?"A":"D"}</div>
     </div>
@@ -133,7 +237,7 @@ window.addEventListener("keydown",e=>{
 function winnerPosterHTML(m){
   return `<div class="poster-wrap">
     <div class="poster-placeholder">${m.title}</div>
-    <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="high">
+    <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="auto">
   </div>
   <div class="winner-meta">
     <div class="winner-name">${m.title}</div>
