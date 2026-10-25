@@ -1,0 +1,169 @@
+=${encodeURIComponent(src)}&w=560&h=840&fit=cover&output=webp&q=78`;
+}
+
+function posterCandidates(m){
+  const originals = [
+    ...(DIRECT_POSTERS[m.id] || []),
+    m.poster,
+    m.douban ? `https://dou.img.lithub.cc/movie/${m.douban}.jpg` : null
+  ].filter(Boolean);
+  const unique = [...new Set(originals)];
+  // Try lightweight proxied image first, then original as fallback.
+  return unique.flatMap(src => [fastPosterUrl(src), src]).filter(Boolean);
+}
+
+function preloadMoviePoster(m){
+  if(!m || PRELOADED_POSTERS.has(m.id)) return;
+  PRELOADED_POSTERS.add(m.id);
+  const src = posterCandidates(m)[0];
+  if(!src) return;
+  const img = new Image();
+  img.decoding = "async";
+  img.fetchPriority = "low";
+  img.src = src;
+}
+
+function preloadUpcoming(){
+  // Preload the next few likely cards after the current pair.
+  const ids = state.current.slice(state.index + 2, state.index + 8);
+  ids.forEach(id => preloadMoviePoster(byId[id]));
+}
+
+function resolvePoster(m,img){
+  const wrap = img.parentElement;
+  const ph = wrap ? wrap.querySelector(".poster-placeholder") : null;
+
+  const candidates = posterCandidates(m);
+  let i = 0;
+
+  img.style.display = "block";
+  img.style.opacity = "1";
+  img.style.visibility = "visible";
+
+  const reveal = () => {
+    img.style.display = "block";
+    img.style.opacity = "1";
+    img.style.visibility = "visible";
+    img.style.position = "absolute";
+    img.style.inset = "0";
+    img.style.zIndex = "1";
+    if(ph) ph.style.display = "none";
+  };
+
+  const tryNext = () => {
+    if(i >= candidates.length){
+      posterFallback(wrap,m);
+      return;
+    }
+    const src = candidates[i++];
+    img.onload = () => {
+      reveal();
+      requestAnimationFrame(() => reveal());
+      setTimeout(reveal, 0);
+    };
+    img.onerror = () => tryNext();
+    img.src = src;
+  };
+  tryNext();
+}
+
+function cardHTML(m,side){
+  return `
+    <div class="poster-wrap">
+      <div class="poster-placeholder">${m.title}</div>
+      <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="high">
+      <div class="rating"><b>★</b>${m.rating.toFixed(1)}</div>
+      <div class="kbd">${side==="left"?"A":"D"}</div>
+    </div>
+    <div class="card-body">
+      <div class="title-row">
+        <div class="movie-title">${m.title}</div>
+        <div class="year">${m.year}</div>
+      </div>
+      <div class="original">${m.original||"　"}</div>
+      <div class="pick"><span>今天先选它</span><span>→</span></div>
+    </div>`;
+}
+function render(){
+  if(!nextPairReady()) return;
+  game.style.display="block";result.classList.remove("show");
+  const a=byId[state.current[state.index]], b=byId[state.current[state.index+1]];
+  leftCard.innerHTML=cardHTML(a,"left");
+  rightCard.innerHTML=cardHTML(b,"right");
+  resolvePoster(a,leftCard.querySelector(".poster"));
+  resolvePoster(b,rightCard.querySelector(".poster"));
+  const roundMatches=Math.floor(state.current.length/2);
+  const matchup=Math.floor(state.index/2)+1;
+  progressText.textContent=`第 ${state.round} 轮 · 对决 ${matchup}/${roundMatches}`;
+  countText.textContent=`已做出 ${state.completed}/57 次选择`;
+  progressBar.style.width=`${Math.min(100,state.completed/57*100)}%`;
+  roundChip.textContent=`第 ${state.round} 轮`;
+  preloadUpcoming();
+}
+function choose(side){
+  if(state.finished || !nextPairReady()) return;
+  const left=state.current[state.index], right=state.current[state.index+1];
+  const winner=side==="left"?left:right;
+  const loser=side==="left"?right:left;
+  if(!state.history[winner]) state.history[winner]=[];
+  state.history[winner].push(loser);
+  state.winners.push(winner);
+  state.index+=2;
+  state.completed++;
+  save();
+  const chosen=side==="left"?leftCard:rightCard;
+  chosen.style.borderColor="rgba(243,200,106,.88)";
+  document.getElementById("arena").classList.add("fade-out");
+  setTimeout(()=>{
+    document.getElementById("arena").classList.remove("fade-out");
+    chosen.style.borderColor="";
+    render();
+  },155);
+}
+leftCard.addEventListener("click",()=>choose("left"));
+rightCard.addEventListener("click",()=>choose("right"));
+leftCard.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose("left")}});
+rightCard.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose("right")}});
+window.addEventListener("keydown",e=>{
+  if(state.finished)return;
+  if(e.key.toLowerCase()==="a") choose("left");
+  if(e.key.toLowerCase()==="d") choose("right");
+});
+
+function winnerPosterHTML(m){
+  return `<div class="poster-wrap">
+    <div class="poster-placeholder">${m.title}</div>
+    <img class="poster" alt="${m.title} 海报" referrerpolicy="no-referrer" loading="eager" decoding="async" fetchpriority="high">
+  </div>
+  <div class="winner-meta">
+    <div class="winner-name">${m.title}</div>
+    <div class="winner-score">★ 豆瓣 ${m.rating.toFixed(1)} · ${m.year}</div>
+  </div>`;
+}
+function showResult(){
+  game.style.display="none";result.classList.add("show");
+  const m=byId[state.champion];
+  winnerCard.innerHTML=winnerPosterHTML(m);
+  resolvePoster(m,winnerCard.querySelector(".poster"));
+  const defeated=state.history[state.champion]||[];
+  roadList.innerHTML=defeated.length ? defeated.map(id=>`<span>${byId[id].title}</span>`).join("") : "<span>轮空夺冠（这不太可能）</span>";
+  burst();
+}
+function burst(){
+  const box=document.getElementById("confetti");
+  box.innerHTML="";
+  for(let i=0;i<64;i++){
+    const p=document.createElement("i");
+    p.style.left=Math.random()*100+"vw";
+    p.style.opacity=.45+Math.random()*.55;
+    p.style.animationDuration=(2.7+Math.random()*2.6)+"s";
+    p.style.animationDelay=(Math.random()*.55)+"s";
+    p.style.setProperty("--dx",`${(Math.random()-.5)*260}px`);
+    if(i%3===0)p.style.background="#9b7bd7";
+    if(i%5===0)p.style.background="#e8e3d8";
+    box.appendChild(p);
+  }
+  setTimeout(()=>box.innerHTML="",6000);
+}
+document.getElementById("restartBtn").addEventListener("click",()=>{
+  state=newState();save();result.classList.remove("
