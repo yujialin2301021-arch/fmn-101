@@ -1,0 +1,35 @@
+name: Fetch missing movie posters
+
+on:
+  push:
+    paths:
+      - "scripts/fetch_missing_posters.py"
+      - ".github/workflows/fetch-missing-posters.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  posters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests pillow
+      - name: Fetch two missing posters
+        run: python scripts/fetch_missing_posters.py
+      - name: Commit posters
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posters/12.webp posters/56.webp
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Add two missing local posters [skip ci]"
+            git push
+          fi
