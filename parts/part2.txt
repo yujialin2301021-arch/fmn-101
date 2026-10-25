@@ -1,4 +1,29 @@
-60 部电影纪念制作的小小游戏；海报版权归各自权利人所有。
+   <div class="vs">VS</div>
+      <article class="movie-card" id="rightCard" tabindex="0" role="button" aria-label="选择右边电影"></article>
+    </div>
+    <p class="hint">点击你此刻更偏爱的一部 · 电脑键盘也可以按 <strong>A</strong> / <strong>D</strong></p>
+    <div class="status-note">这一版不再运行时调用跨域海报 API：每部电影都预先写入了对应海报直链，并按顺序自动尝试备用源；若全部不可用才显示电影名占位封面。进度仍会保存在本机浏览器。</div>
+  </section>
+
+  <section class="result" id="result">
+    <div class="crown">♛</div>
+    <div class="eyebrow">FMN 101</div>
+    <h2>FMN 101 诞生啦</h2>
+    <p class="lead">在这份 60 部电影纪念片单里，你最终留下了这部心头好。</p>
+    <div class="winner-card" id="winnerCard"></div>
+    <div class="actions">
+      <button class="primary" id="restartBtn">重新开始，再选一次</button>
+      <button class="secondary" id="copyBtn">复制结果</button>
+    </div>
+    <div class="road" id="road">
+      <h3>一路相遇过的电影</h3>
+      <div class="road-list" id="roadList"></div>
+    </div>
+  </section>
+
+  <footer>
+    电影片名、年份与豆瓣评分依据「周五电影之夜」公开豆列页面整理（2026-10-25读取）。豆列页面标记“全部(60)”，但当前公开分页实际可读取到58个电影条目，因此本游戏纳入58部可读取电影。<br>
+    海报已按电影逐一预解析为直链；能确认到豆瓣词条主海报的条目优先使用豆瓣图源，并配置其他对应电影海报作为备用。这是为 FMN 60 部电影纪念制作的小小游戏；海报版权归各自权利人所有。
   </footer>
 </main>
 <div class="toast" id="toast">已复制</div>
@@ -29,17 +54,4 @@ const MOVIES = [
 {id:22,douban:"25880937",title:"轻松自由",original:"Libre et assoupi",rating:8.2,year:2014,wikiLang:"fr",wiki:"Libre et assoupi"},
 {id:23,douban:"1293847",title:"生之欲",original:"生きる",rating:9.3,year:1952,wikiLang:"en",wiki:"Ikiru"},
 {id:24,douban:"1421278",title:"面子",original:"Saving Face",rating:8.9,year:2004,wikiLang:"en",wiki:"Saving Face (2004 film)"},
-{id:25,douban:"1303521",title:"特写",original:"کلوزآپ",rating:8.8,year:1990,wikiLang:"en",wiki:"Close-Up (1990 film)"},
-{id:26,douban:"1305261",title:"恐怖分子",original:"恐怖份子",rating:9.0,year:1986,wikiLang:"en",wiki:"The Terrorizers"},
-{id:27,douban:"1401385",title:"彗星美人",original:"All About Eve",rating:8.7,year:1950,wikiLang:"en",wiki:"All About Eve"},
-{id:28,douban:"36742579",title:"罪人",original:"Sinners",rating:7.7,year:2025,wikiLang:"en",wiki:"Sinners (2025 film)"},
-{id:29,douban:"1294364",title:"相见恨晚",original:"Brief Encounter",rating:8.0,year:1945,wikiLang:"en",wiki:"Brief Encounter"},
-{id:30,douban:"1293868",title:"龙凤配",original:"Sabrina",rating:7.7,year:1954,wikiLang:"en",wiki:"Sabrina (1954 film)"},
-{id:31,douban:"1419479",title:"女人步上楼梯时",original:"女が階段を上る時",rating:9.1,year:1960,wikiLang:"en",wiki:"When a Woman Ascends the Stairs"},
-{id:32,douban:"1293323",title:"大红灯笼高高挂",original:"",rating:8.8,year:1991,wikiLang:"en",wiki:"Raise the Red Lantern"},
-{id:33,douban:"1294726",title:"大玩家",original:"The Player",rating:7.7,year:1992,wikiLang:"en",wiki:"The Player (1992 film)"},
-{id:34,douban:"1292969",title:"光荣之路",original:"Paths of Glory",rating:9.1,year:1957,wikiLang:"en",wiki:"Paths of Glory"},
-{id:35,douban:"1294418",title:"满城风雨",original:"The Front Page",rating:8.5,year:1974,wikiLang:"en",wiki:"The Front Page (1974 film)"},
-{id:36,douban:"1310176",title:"放大",original:"Blow-Up",rating:8.4,year:1966,wikiLang:"en",wiki:"Blowup"},
-{id:37,douban:"36960439",title:"昨日青春",original:"Happyend",rating:7.9,year:2024,wikiLang:"en",wiki:"Happyend (2024 film)"},
-{id:38,douban:"1293226",t
+{id:
