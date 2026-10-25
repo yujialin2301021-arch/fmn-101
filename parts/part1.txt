@@ -1,4 +1,11 @@
-px;margin-top:1px}
+;z-index:3;width:31px;height:31px;border-radius:9px;
+    display:grid;place-items:center;background:rgba(255,250,243,.88);border:1px solid rgba(81,55,84,.12);
+    font-size:11px;color:#927485;font-weight:800
+  }
+  .card-body{padding:18px 19px 20px}
+  .title-row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+  .movie-title{font-size:clamp(20px,2.4vw,29px);font-weight:900;letter-spacing:-.035em;line-height:1.16}
+  .year{flex:0 0 auto;color:#929baa;font-size:12px;border:1px solid var(--line);padding:5px 7px;border-radius:7px;margin-top:1px}
   .original{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45;min-height:18px}
   .pick{margin-top:17px;display:flex;align-items:center;justify-content:space-between;color:#7b5d6a;font-size:12px;font-weight:800}
   .pick span:last-child{color:var(--gold);font-size:18px;transition:transform .2s ease}
@@ -98,29 +105,4 @@ px;margin-top:1px}
 
     <div class="arena" id="arena">
       <article class="movie-card" id="leftCard" tabindex="0" role="button" aria-label="选择左边电影"></article>
-      <div class="vs">VS</div>
-      <article class="movie-card" id="rightCard" tabindex="0" role="button" aria-label="选择右边电影"></article>
-    </div>
-    <p class="hint">点击你此刻更偏爱的一部 · 电脑键盘也可以按 <strong>A</strong> / <strong>D</strong></p>
-    <div class="status-note">这一版不再运行时调用跨域海报 API：每部电影都预先写入了对应海报直链，并按顺序自动尝试备用源；若全部不可用才显示电影名占位封面。进度仍会保存在本机浏览器。</div>
-  </section>
-
-  <section class="result" id="result">
-    <div class="crown">♛</div>
-    <div class="eyebrow">FMN 101</div>
-    <h2>FMN 101 诞生啦</h2>
-    <p class="lead">在这份 60 部电影纪念片单里，你最终留下了这部心头好。</p>
-    <div class="winner-card" id="winnerCard"></div>
-    <div class="actions">
-      <button class="primary" id="restartBtn">重新开始，再选一次</button>
-      <button class="secondary" id="copyBtn">复制结果</button>
-    </div>
-    <div class="road" id="road">
-      <h3>一路相遇过的电影</h3>
-      <div class="road-list" id="roadList"></div>
-    </div>
-  </section>
-
-  <footer>
-    电影片名、年份与豆瓣评分依据「周五电影之夜」公开豆列页面整理（2026-10-25读取）。豆列页面标记“全部(60)”，但当前公开分页实际可读取到58个电影条目，因此本游戏纳入58部可读取电影。<br>
-    海报已按电影逐一预解析为直链；能确认到豆瓣词条主海报的条目优先使用豆瓣图源，并配置其他对应电影海报作为备用。这是为 FMN 
+    
